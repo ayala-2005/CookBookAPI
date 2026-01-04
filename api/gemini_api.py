@@ -2,6 +2,7 @@
 import os
 import requests
 import urllib3
+from dotenv import load_dotenv
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from db.connection import SessionLocal
@@ -20,11 +21,16 @@ def get_db():
     finally:
         db.close()
 
+# טען את כל הערכים מה- .env
+load_dotenv()
+
+# קח את המפתח מהסביבה
+API_KEY = os.getenv("API_KEY")
+
 
 @router.get("/chat")
 def chat(user_question: str, db: Session = Depends(get_db)):
     # 1. הגדרת המפתח בתוך הפונקציה
-    API_KEY = "AIzaSyAGlbdOzneJ1K4OMZmZVkJ73Eif4sEVIo0"
     target_url = (
             "https://generativelanguage.googleapis.com/v1beta/models/"
             "gemini-2.5-flash:generateContent?key=" + API_KEY
