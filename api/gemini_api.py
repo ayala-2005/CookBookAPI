@@ -25,7 +25,7 @@ def get_db():
 load_dotenv()
 
 # קח את המפתח מהסביבה
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 @router.get("/chat")
