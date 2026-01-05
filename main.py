@@ -17,7 +17,7 @@ app.add_middleware(
 
 # תיקון ה-Prefixes:
 # כאן אנחנו מגדירים שכל מה שקשור למתכונים יתחיל ב-/recipes
-app.include_router(recipes_router, prefix="/recipes", tags=["Recipes"])
+app.include_router(recipes_router, tags=["Recipes"])
 
 # כאן אנחנו מחברים את ה-Gemini (הוא כבר מכיל את הנתיב /chat בתוך ה-router שלו)
 app.include_router(chat_router, tags=["Chat"])
