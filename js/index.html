@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מתכונים מתוקים</title>
+    <title>ספר המתכונים שלי</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1 class="logo">Sweet Recipes</h1>
+            <h1 class="logo">ספר המתכונים שלי</h1>
             <nav class="nav">
-                <a href="javascript:void(0)" data-category="3" class="nav-link">Desserts</a>
-                <a href="javascript:void(0)" data-category="1" class="nav-link">Cakes</a>
-                <a href="javascript:void(0)" data-category="2" class="nav-link">Cookies</a>
-                <button type="button" onclick="toggleAdminMode()" class="admin-btn" id="adminBtn">Admin Mode</button>
+                <a href="javascript:void(0)" data-category="1" class="nav-link">עוגות</a>
+                <a href="javascript:void(0)" data-category="2" class="nav-link">מרקים</a>
+                <a href="javascript:void(0)" data-category="3" class="nav-link">סלטים</a>
+                <a href="javascript:void(0)" data-category="4" class="nav-link">מאפים</a>
+                <a href="javascript:void(0)" data-category="5" class="nav-link">קינוחים</a>
+                <button type="button" onclick="toggleAdminMode()" class="admin-btn" id="adminBtn">מצב מנהל</button>
             </nav>
         </div>
     </header>
@@ -25,29 +27,39 @@
         <div id="homePage" class="page">
             <section class="hero">
                 <div class="container">
-                    <h2 class="hero-title">Discover the World of Sweetness</h2>
-                    <p class="hero-subtitle">Choose a category and start creating magic in the kitchen</p>
+                    <h2 class="hero-title">ברוכים הבאים לספר המתכונים</h2>
+                    <p class="hero-subtitle">בחר קטגוריה והתחל לבשל</p>
                 </div>
             </section>
 
             <section class="categories-section">
                 <div class="container">
-                    <h2 class="section-title">Recipe Categories</h2>
+                    <h2 class="section-title">קטגוריות מתכונים</h2>
                     <div class="categories-grid">
-                        <div class="category-card" data-category="3" style="cursor: pointer;">
-                            <img src="img/קינוחים/1.jpg" alt="Desserts" class="category-image">
-                            <h3>Desserts</h3>
-                            <p>Sweet and indulgent desserts</p>
+                        <div class="category-card" data-category="1">
+                            <img src="img/עוגות/לוגו.jpg" alt="עוגות" class="category-image">
+                            <h3>עוגות</h3>
+                            <p>עוגות טעימות ומיוחדות</p>
                         </div>
-                        <div class="category-card" data-category="1" style="cursor: pointer;">
-                            <img src="img/עוגות/1.jpg" alt="Cakes" class="category-image">
-                            <h3>Cakes</h3>
-                            <p>Festive and special cakes</p>
+                        <div class="category-card" data-category="2">
+                            <img src="img/מרקים/לוגו.jpg" alt="מרקים" class="category-image">
+                            <h3>מרקים</h3>
+                            <p>מרקים חמים ומזינים</p>
                         </div>
-                        <div class="category-card" data-category="2" style="cursor: pointer;">
-                            <img src="img/עוגיות/1.jpg" alt="Cookies" class="category-image">
-                            <h3>Cookies</h3>
-                            <p>Crispy and delicious cookies</p>
+                        <div class="category-card" data-category="3">
+                            <img src="img/סלטים/לוגו.jpg" alt="סלטים" class="category-image">
+                            <h3>סלטים</h3>
+                            <p>סלטים טריים ובריאים</p>
+                        </div>
+                        <div class="category-card" data-category="4">
+                            <img src="img/מאפים/לוגו.jpg" alt="מאפים" class="category-image">
+                            <h3>מאפים</h3>
+                            <p>מאפים ביתיים וטעימים</p>
+                        </div>
+                        <div class="category-card" data-category="5">
+                            <img src="img/קינוחים/לוגו.jpg" alt="קינוחים" class="category-image">
+                            <h3>קינוחים</h3>
+                            <p>קינוחים מתוקים ומפנקים</p>
                         </div>
                     </div>
                 </div>
@@ -77,32 +89,39 @@
                             <label for="recipeTitle">שם המתכון</label>
                             <input type="text" id="recipeTitle" name="title" required class="form-input">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="recipeDescription">תיאור</label>
                             <textarea id="recipeDescription" name="description" rows="3" class="form-textarea"></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="recipeIngredients">רכיבים</label>
                             <textarea id="recipeIngredients" name="ingredients" rows="5" class="form-textarea"></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="recipeInstructions">הוראות הכנה</label>
                             <textarea id="recipeInstructions" name="instructions" rows="6" class="form-textarea"></textarea>
                         </div>
-                        
+
+                        <div class="form-group">
+                            <label for="recipePrepTime">זמן הכנה (דקות)</label>
+                            <input type="number" id="recipePrepTime" name="preptime" min="0" class="form-input">
+                        </div>
+
                         <div class="form-group">
                             <label for="recipeCategory">קטגוריה</label>
                             <select id="recipeCategory" name="category" required class="form-select">
                                 <option value="">בחר קטגוריה</option>
-                                <option value="3">קינחים</option>
                                 <option value="1">עוגות</option>
-                                <option value="2">עוגיות</option>
+                                <option value="2">מרקים</option>
+                                <option value="3">סלטים</option>
+                                <option value="4">מאפים</option>
+                                <option value="5">קינוחים</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="recipeImage">תמונה</label>
                             <div class="image-upload">
@@ -114,7 +133,7 @@
                                 <div id="imagePreview" class="image-preview hidden"></div>
                             </div>
                         </div>
-                        
+
                         <div class="form-actions">
                             <button type="submit" class="submit-btn">שמור מתכון</button>
                             <button type="button" onclick="goBack()" class="cancel-btn">ביטול</button>
@@ -136,7 +155,7 @@
     <!-- צ'אט צד -->
     <div id="chatWidget" class="chat-widget">
         <div class="chat-header" onclick="toggleChat()">
-            <span>💬 שאל את השף</span>
+            <span>💬 שאל שאלה</span>
             <span id="chatToggle">▲</span>
         </div>
         <div class="chat-body" id="chatBody">
@@ -150,18 +169,10 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 מתכונים מתוקים - כל הזכויות שמורות</p>
+            <p>&copy; 2025 ספר המתכונים שלי - כל הזכויות שמורות</p>
         </div>
     </footer>
 
-    <script>
-        // בדיקה שהפונקציות נטענות
-        window.addEventListener('load', function() {
-            console.log('Page loaded');
-            console.log('loadCategory function:', typeof loadCategory);
-            console.log('toggleAdminMode function:', typeof toggleAdminMode);
-        });
-    </script>
     <script src="script.js"></script>
 </body>
 </html>

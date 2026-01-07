@@ -5,6 +5,7 @@ from datetime import datetime
 
 Base = declarative_base()
 
+
 class Category(Base):
     __tablename__ = "Categories"
 
@@ -26,6 +27,9 @@ class Recipe(Base):
     PrepTime = Column(Integer)
     CategoryId = Column(Integer, ForeignKey("Categories.Id"), nullable=False)
     CreatedAt = Column(DateTime, default=datetime.now)
+
+    # 🔹 הוספת עמודת תמונה
+    image_path = Column(String) # מספיק מקום לנתיב ארוך
 
     # קשר ל-Category
     category = relationship("Category", back_populates="recipes")

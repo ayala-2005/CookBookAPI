@@ -40,9 +40,9 @@ function toggleAdminMode() {
             return;
         }
     }
-    
+
     isAdminMode = !isAdminMode;
-    document.getElementById('adminBtn').textContent = isAdminMode ? 'יציאה ממצב מנהל' : 'Admin Mode';
+    document.getElementById('adminBtn').textContent = isAdminMode ? 'יציאה ממצב מנהל' : 'מצב מנהל';
     const addBtn = document.getElementById('addRecipeBtn');
     if (addBtn) addBtn.classList.toggle('hidden', !isAdminMode);
     if (currentCategory) loadCategory(currentCategory);
@@ -71,8 +71,8 @@ function editRecipe(recipeId) {
             document.getElementById('recipeIngredients').value = recipe.Ingredients || '';
             document.getElementById('recipeInstructions').value = recipe.Instructions || '';
             document.getElementById('recipeCategory').value = recipe.CategoryId || currentCategory;
-            if (recipe.Images) {
-                document.getElementById('imagePreview').innerHTML = `<img src="${recipe.Images}" alt="תמונה קיימת">`;
+            if (recipe.image_path) {
+                document.getElementById('imagePreview').innerHTML = `<img src="${recipe.image_path}" alt="תמונה קיימת">`;
                 document.getElementById('imagePreview').classList.remove('hidden');
             }
         })
@@ -87,7 +87,10 @@ function deleteRecipe(recipeId) {
 
     fetch(`${API_BASE}/${recipeId}`, { method: 'DELETE' })
         .then(res => { if (!res.ok) throw new Error(); })
-        .then(() => loadCategory(currentCategory))
+        .then(() => {
+            alert('המתכון נמחק בהצלחה');
+            loadCategory(currentCategory);
+        })
         .catch(() => alert('שגיאה במחיקת המתכון'));
 }
 
@@ -111,15 +114,14 @@ function handleRecipeSubmit(e) {
         Ingredients: ingredients,
         Instructions: instructions,
         CategoryId: categoryId,
-        PrepTime: parseInt(document.getElementById('recipePrepTime')?.value) || 0,
-        Images: null
+        PrepTime: parseInt(document.getElementById('recipePrepTime')?.value) || 0
     };
 
     const imageFile = document.getElementById('recipeImage').files[0];
     if (imageFile) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            data.Images = e.target.result; // Base64
+            data.image_path = e.target.result; // Base64
             sendRecipeData(data);
         };
         reader.readAsDataURL(imageFile);
@@ -170,22 +172,26 @@ function handleImagePreview(e) {
 // טעינת קטגוריה
 async function loadCategory(categoryId) {
     currentCategory = categoryId;
-    const categoryNames = {1: 'עוגות', 2: 'עוגיות', 3: 'קינחים'};
-    document.getElementById('categoryTitle').textContent = categoryNames[categoryId];
+    const categoryNames = {
+        1: 'עוגות',
+        2: 'מרקים',
+        3: 'סלטים',
+        4: 'מאפים',
+        5: 'קינוחים'
+    };
     
+    document.getElementById('categoryTitle').textContent = categoryNames[categoryId];
+
     // הצגת/הסתרת כפתור הוספה
     const addBtn = document.getElementById('addRecipeBtn');
-    console.log('isAdminMode:', isAdminMode);
     if (addBtn) {
         if (isAdminMode) {
             addBtn.classList.remove('hidden');
-            console.log('כפתור הוספה מוצג');
         } else {
             addBtn.classList.add('hidden');
-            console.log('כפתור הוספה מוסתר');
         }
     }
-    
+
     showPage('categoryPage');
 
     const recipesGrid = document.getElementById('recipesGrid');
@@ -212,7 +218,7 @@ function displayRecipes(recipes) {
     recipesGrid.innerHTML = recipes.map(r => `
         <div class="recipe-card" onclick="showRecipe(${r.Id})">
             <div class="recipe-image">
-                ${r.Images ? `<img src="${r.Images}" alt="${r.Title}">` : `<div style="font-size:3rem; text-align:center;">🍰</div>`}
+                ${r.image_path ? `<img src="${r.image_path}" alt="${r.Title}">` : `<div style="font-size:3rem; text-align:center;">🍽️</div>`}
             </div>
             <div class="recipe-content">
                 <h3>${r.Title}</h3>
@@ -220,10 +226,10 @@ function displayRecipes(recipes) {
                 ${isAdminMode ? `
                     <div class="recipe-actions">
                         <button onclick="event.stopPropagation(); editRecipe(${r.Id})" class="edit-btn">
-                            UPDATE
+                            עריכה
                         </button>
                         <button onclick="event.stopPropagation(); deleteRecipe(${r.Id})" class="delete-btn">
-                            DELETE
+                            מחיקה
                         </button>
                     </div>
                 ` : ''}
@@ -242,24 +248,31 @@ async function showRecipe(recipeId) {
         showPage('recipePage');
         document.getElementById('recipeDetails').innerHTML = `
             <div class="recipe-hero">
-                ${r.Images ? `<img src="${r.Images}" alt="${r.Title}" style="width: 100%; max-width: 400px; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;">` : `<div class="recipe-hero-icon">🍰</div>`}
+                ${r.image_path ? `<img src="${r.image_path}" alt="${r.Title}" style="width: 100%; max-width: 400px; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;">` : `<div class="recipe-hero-icon">🍽️</div>`}
                 <h1>${r.Title}</h1>
             </div>
-            
+
             <div class="recipe-section">
                 <h3>תיאור</h3>
-                <p>${r.Description || 'מתכון מתוק ומיוחד'}</p>
+                <p>${r.Description || 'מתכון טעים ומיוחד'}</p>
             </div>
-            
+
             <div class="recipe-section">
                 <h3>רכיבים</h3>
-                <p>${r.Ingredients}</p>
+                <p style="white-space: pre-line;">${r.Ingredients}</p>
             </div>
-            
+
             <div class="recipe-section">
                 <h3>הוראות הכנה</h3>
-                <p>${r.Instructions}</p>
+                <p style="white-space: pre-line;">${r.Instructions}</p>
             </div>
+
+            ${r.PrepTime ? `
+            <div class="recipe-section">
+                <h3>זמן הכנה</h3>
+                <p>${r.PrepTime} דקות</p>
+            </div>
+            ` : ''}
         `;
     } catch (err) {
         alert(err.message);
@@ -275,7 +288,7 @@ function showPage(pageId) {
 function goBack() {
     const recipePage = document.getElementById('recipePage');
     const recipeFormPage = document.getElementById('recipeFormPage');
-    
+
     if (!recipePage.classList.contains('hidden')) {
         showPage('categoryPage');
     } else if (!recipeFormPage.classList.contains('hidden')) {
@@ -291,7 +304,7 @@ function goHome() {
 function toggleChat() {
     const chatBody = document.getElementById('chatBody');
     const chatToggle = document.getElementById('chatToggle');
-    
+
     if (chatBody.classList.contains('collapsed')) {
         chatBody.classList.remove('collapsed');
         chatToggle.textContent = '▼';
@@ -305,19 +318,19 @@ async function sendMessage() {
     const chatInput = document.getElementById('chatInput');
     const message = chatInput.value.trim();
     if (!message) return;
-    
+
     addMessage(message, 'user');
     chatInput.value = '';
-    
+
     const typingDiv = addMessage('כותב...', 'bot');
-    
+
     try {
         const response = await fetch(`http://127.0.0.1:8000/chat?user_question=${encodeURIComponent(message)}`);
         if (!response.ok) throw new Error('שגיאה בשליחת ההודעה');
-        
+
         const data = await response.json();
         typingDiv.remove();
-        
+
         if (data.answer) {
             addMessage(data.answer, 'bot');
         } else if (data.error) {

@@ -1,9 +1,7 @@
-# db/queries.py
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from .models import Recipe
 from db.schemas import RecipeCreate
-
 
 def query_get_all_recipes(db: Session):
     try:
@@ -31,15 +29,19 @@ def query_get_recipe_by_category(db: Session, recipe_category_id: int):
 
 def query_add_recipe(db: Session, recipe: Recipe):
     try:
+        # אם image_path לא קיים, נותנים ברירת מחדל None
+        if not hasattr(recipe, "image_path"):
+            recipe.image_path = None
+
         db.add(recipe)
         db.commit()
         db.refresh(recipe)  # טוען את ה-ID והנתונים המעודכנים מה-DB
         return recipe
     except SQLAlchemyError as e:
-        db.rollback()  # מבטלים את השינויים אם קרתה שגיאה
+        db.rollback()
         print(f"Database error: {e}")
-        print(f"Recipe data: {recipe.__dict__}")  # מדפיס את הנתונים שניסינו להוסיף
-        return None  # מחזיר None במקום [] כדי שה-service ידע שהכשלה קרתה
+        print(f"Recipe data: {recipe.__dict__}")
+        return None
 
 def query_update_recipe(db: Session, recipe_id: int, recipe_data: RecipeCreate):
     try:
@@ -49,7 +51,9 @@ def query_update_recipe(db: Session, recipe_id: int, recipe_data: RecipeCreate):
             "Ingredients": recipe_data.Ingredients,
             "Instructions": recipe_data.Instructions,
             "PrepTime": recipe_data.PrepTime,
-            "CategoryId": recipe_data.CategoryId
+            "CategoryId": recipe_data.CategoryId,
+            # ⚡ תמיכה בתמונה
+            "image_path": getattr(recipe_data, "image_path", None)
         }
         db.query(Recipe).filter(Recipe.Id == recipe_id).update(update_data)
         db.commit()
